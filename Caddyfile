@@ -1,0 +1,32 @@
+# Reverse proxy in front of the horcrux-notifier binary.
+# Caddy handles TLS termination, global rate limiting, and security headers;
+# the Rust service handles NIP-98 auth, per-pair throttling, and FCM dispatch.
+
+{$NOTIFIER_HOST:notify.horcruxbackup.com} {
+    encode zstd gzip
+
+    # Global IP-based rate limit as a crude defense against flooding.
+    # Per-sender/recipient limits are enforced inside the notifier itself.
+    @too_fast {
+        rate_limit {
+            key {remote_host}
+            events 30
+            window 1s
+        }
+    }
+    handle @too_fast {
+        respond "Too Many Requests" 429
+    }
+
+    header {
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+        Strict-Transport-Security "max-age=63072000"
+        -Server
+    }
+
+    reverse_proxy 127.0.0.1:8080 {
+        header_up X-Forwarded-Proto "https"
+        header_up X-Forwarded-Host {host}
+    }
+}
