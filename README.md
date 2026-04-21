@@ -67,7 +67,7 @@ Every authenticated request carries a fresh Nostr event:
 
 The request URL used for the `u` tag check is reconstructed from the
 `X-Forwarded-Proto`, `X-Forwarded-Host`, and `Host` headers behind a reverse
-proxy. Configure your reverse proxy (see `Caddyfile`) accordingly.
+proxy. Configure your reverse proxy to set those headers correctly.
 
 ## Rate limiting
 
@@ -79,7 +79,7 @@ Enforced in-process against SQLite, surviving restarts:
 | `/push` per recipient          | 60 per hour    |
 | `/register` per pubkey         | 10 per hour    |
 
-Put a reverse proxy (Caddy) in front for per-IP global limits.
+Put a reverse proxy in front for per-IP global limits.
 
 ## Configuration
 
@@ -139,8 +139,8 @@ docker run -d \
   horcrux-notifier
 ```
 
-Terminate TLS with Caddy (see `Caddyfile`) or any reverse proxy that sets
-`X-Forwarded-Host` and `X-Forwarded-Proto`.
+Terminate TLS with a reverse proxy that sets `X-Forwarded-Host` and
+`X-Forwarded-Proto`.
 
 ## Data model
 

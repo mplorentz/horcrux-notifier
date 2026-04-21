@@ -130,7 +130,7 @@ bitten people before:
 - The `u` tag must match the **full request URL**, reconstructed from
   `X-Forwarded-Proto` + (`X-Forwarded-Host` or `Host`) + `path_and_query`.
   This means tests must set those headers, and production must front the
-  service with a reverse proxy that sets them (see `Caddyfile`).
+  service with a reverse proxy that sets them.
 - The `method` tag is compared case-insensitively.
 - The `payload` tag is required on POST/PUT/PATCH **when the body is non-empty**
   and is the hex SHA-256 of the *raw* body. An empty POST body skips the check.
